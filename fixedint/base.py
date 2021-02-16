@@ -384,12 +384,12 @@ def _arith_binfunc_factory(name):
     @int_method(name)
     def _f(self, other):
         nt = _arith_convert(type(self), type(other))
-        return nt(intfunc(int(self), int(other)))
+        return nt(intfunc(int(nt(self)), int(nt(other))))
     return _f
 
 # divmod, rdivmod, truediv, rtruediv are considered non-arithmetic since they don't return ints
 # pow, rpow, rlshift, and rrshift are special since the LHS and RHS are very different
-_arith_binfunc = 'add sub mul floordiv mod lshift rshift and xor or'.split()
+_arith_binfunc = 'add sub mul floordiv mod lshift rshift and xor or lt le eq ne gt ge'.split()
 _arith_binfunc += 'radd rsub rmul rfloordiv rmod rand rxor ror'.split()
 if not PY3K:
     _arith_binfunc += 'div rdiv'.split()
@@ -432,10 +432,10 @@ def _nonarith_binfunc_factory_mutable(name):
     return _f
 
 _mutable_binfunc = 'truediv rtruediv divmod rdivmod rlshift rrshift'.split()
-if hasattr(int, '__cmp__'):
-    _mutable_binfunc += ['cmp']
-else:
-    _mutable_binfunc += 'lt le eq ne gt ge'.split()
+#if hasattr(int, '__cmp__'):
+#    _mutable_binfunc += ['cmp']
+#else:
+#    _mutable_binfunc += 'lt le eq ne gt ge'.split()
 for f in _mutable_binfunc:
     s = '__%s__' % f
     setattr(MutableFixedInt, s, _nonarith_binfunc_factory_mutable(s))
